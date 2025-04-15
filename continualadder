@@ -1,0 +1,50 @@
+;jump.asm
+extern printf
+section .data
+    number1 dq 41
+    number2 dq 35
+    difference dq 0
+    fmt1 db "NUMBER1 > = NUMBER2",10,0
+    fmt2 db "NUMBER1 < NUMBER2",10,0
+    fmt3 db "added 1!", 10, 0
+    myword db "12"
+
+section .bss
+section .text
+    global main
+main:
+    push rbp
+    mov rbp,rsp
+    mov rax, [number1]  ;move the numbers into registers
+    mov rbx, [number2]
+    cmp rax,rbx         ;compare rax and rbx
+    jge greater         ;rax greater or equal go to greater
+mov rdi,fmt2            ;rax is smaller, continue here
+mov rax,0               ;no xmm involved
+    call printf         ;display whats in rdi
+    jmp exit
+
+updateDifference:
+    mov rcx, [difference]
+    add rcx, 1
+    mov [difference], rcx
+    mov rbx, [number2]
+    add rbx, 1
+    mov [number2], rbx
+    mov rdi,fmt3            ;rax is smaller, continue here
+    mov rax,0               ;no xmm involved
+    call printf         ;display whats in rdi
+    jmp greater
+    
+greater:
+    ;push rbp
+    mov rbp,rsp
+    mov rax, [number1]
+    mov rbx, [number2]
+    cmp rax,rbx
+    jge updateDifference
+exit:
+    mov rsp,rbp
+    pop rbp
+    ret
+    
